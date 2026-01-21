@@ -76,9 +76,7 @@
               </div>
               <div class="score-badge-desc">{{ result.mahjong.tagline }}</div>
             </div>
-            <div v-if="isHot" class="score-fx hot">杠上开花</div>
-            <div v-else-if="isLow" class="score-fx low">点炮预警</div>
-            <button class="btn ghost small" @click="backHome">换人再测</button>
+            <div v-if="isLow" class="score-fx low">点炮预警</div>
           </div>
         </div>
 
