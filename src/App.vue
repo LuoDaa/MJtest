@@ -12,11 +12,17 @@
       <section class="hero">
         <div class="hero-title">麻将运势预测</div>
         <div class="hero-sub">
-          输入姓名与生日，结合黄历生成今日麻将手气。
+          输入姓名与生日，生成你的专属牌桌手气与建议。
+        </div>
+        <div class="hero-icons">
+          <span>🀄</span>
+          <span>🧧</span>
+          <span>💰</span>
+          <span>🎴</span>
         </div>
       </section>
 
-      <section v-if="view === 'home'" class="card">
+      <section v-if="view === 'home'" class="card home-card">
         <div class="card-title">输入信息</div>
         <div class="card-sub">同一天同输入，结果稳定且可重复。</div>
 
@@ -38,10 +44,6 @@
               :max="todayKey"
             />
           </label>
-          <div class="field fixed">
-            <span class="label">麻将类型</span>
-            <div class="fixed-value">四川麻将（固定）</div>
-          </div>
         </div>
 
         <div class="actions single">
@@ -56,7 +58,7 @@
         </div>
       </section>
 
-      <section v-else ref="resultRef" class="card result">
+      <section v-else ref="resultRef" class="card result capture-root">
         <div class="result-head">
           <div class="who">
             <div class="name">{{ form.name }}</div>
@@ -80,51 +82,54 @@
 
         <div class="result-grid">
           <div class="card-box small">
-            <div class="label">今日字诀</div>
+            <div class="label">🀄 今日字诀</div>
             <div class="value large">{{ result.mahjong.word }}</div>
           </div>
           <div class="card-box small">
-            <div class="label">吉时</div>
-            <div class="value large">{{ result.mahjong.luckyTime || "—" }}</div>
+            <div class="label">🧭 最佳方位</div>
+            <div class="value large">
+              {{ result.mahjong.bazi.direction }}
+              <span class="muted-inline">· {{ result.mahjong.bazi.element }}</span>
+            </div>
           </div>
 
           <div class="card-box small">
-            <div class="label">建议定缺</div>
+            <div class="label">🎯 建议定缺</div>
             <div class="value">{{ result.mahjong.avoidSuit }}</div>
           </div>
           <div class="card-box small">
-            <div class="label">本命财神牌</div>
+            <div class="label">🧧 本命财神牌</div>
             <div class="value">{{ result.mahjong.fortuneTile }}</div>
           </div>
 
           <div class="card-box small">
-            <div class="label">宜</div>
-            <div class="value">{{ result.mahjong.good }}</div>
+            <div class="label">✅ 宜</div>
+            <div class="value good-text">{{ result.mahjong.good }}</div>
           </div>
           <div class="card-box small">
-            <div class="label">忌</div>
-            <div class="value">{{ result.mahjong.bad }}</div>
+            <div class="label">⛔ 忌</div>
+            <div class="value bad-text">{{ result.mahjong.bad }}</div>
           </div>
 
           <div class="card-box wide">
-            <div class="label">最佳牌友气质</div>
+            <div class="label">🤝 最佳牌友气质</div>
             <div class="value">{{ result.mahjong.bestBuddy }}</div>
           </div>
 
           <div class="card-box wide">
-            <div class="label">麻将运势</div>
+            <div class="label">✨ 麻将运势</div>
             <div class="value text">{{ result.mahjong.reading }}</div>
           </div>
 
           <div class="card-box wide">
-            <div class="label">雀神小贴士</div>
+            <div class="label">🧠 雀神小贴士</div>
             <div class="value text">“{{ result.mahjong.tip }}”</div>
           </div>
 
           <div class="card-box wide">
-            <div class="label">黄历运势</div>
+            <div class="label">📜 黄历运势</div>
             <ul class="almanac-lines">
-              <li v-for="(line, idx) in result.almanacSummary" :key="idx">
+              <li v-for="(line, idx) in result.almanacSummary" :key="idx" :class="almanacLineClass(line)">
                 {{ line }}
               </li>
             </ul>
@@ -142,7 +147,7 @@
 
 <script setup>
 import html2canvas from "html2canvas";
-import { computed, reactive, ref } from "vue";
+import { computed, nextTick, reactive, ref } from "vue";
 import { generateFortune, todayKeyLocal } from "./utils/fortune";
 
 const view = ref("home"); // home | result
@@ -192,14 +197,31 @@ function backHome() {
   view.value = "home";
 }
 
-function onShare() {
-  if (!resultRef.value) return;
-  const node = resultRef.value;
+async function onShare() {
+  await nextTick();
+  if (document.fonts && document.fonts.ready) {
+    await document.fonts.ready;
+  }
+  const node = document.body;
+  if (!node) return;
+  const docEl = document.documentElement;
+  const fullWidth = Math.max(docEl.scrollWidth, docEl.clientWidth);
+  const fullHeight = Math.max(docEl.scrollHeight, docEl.clientHeight);
   const scale = Math.min(window.devicePixelRatio || 2, 3);
   html2canvas(node, {
-    backgroundColor: "#0b1018",
+    backgroundColor: null,
     scale,
     useCORS: true,
+    allowTaint: true,
+    foreignObjectRendering: true,
+    width: fullWidth,
+    height: fullHeight,
+    windowWidth: fullWidth,
+    windowHeight: fullHeight,
+    x: 0,
+    y: 0,
+    scrollX: 0,
+    scrollY: 0,
   })
     .then((canvas) => {
       const link = document.createElement("a");
@@ -210,6 +232,14 @@ function onShare() {
     .catch(() => {
       alert("截图失败，请稍后重试。");
     });
+}
+
+function almanacLineClass(line) {
+  if (line.startsWith("宜")) return "good-text";
+  if (line.startsWith("吉时")) return "good-text";
+  if (line.startsWith("忌")) return "bad-text";
+  if (line.startsWith("避时")) return "bad-text";
+  return "";
 }
 </script>
 
@@ -280,15 +310,22 @@ function onShare() {
 }
 
 .hero-title {
-  font-size: 28px;
+  font-size: 32px;
   letter-spacing: 1px;
   font-weight: 700;
 }
 
 .hero-sub {
   margin-top: 8px;
-  font-size: 14px;
+  font-size: 16px;
   color: rgba(255, 255, 255, 0.7);
+}
+
+.hero-icons {
+  margin-top: 10px;
+  display: inline-flex;
+  gap: 10px;
+  font-size: 20px;
 }
 
 .card {
@@ -301,6 +338,11 @@ function onShare() {
   animation: float-in 0.7s ease;
 }
 
+.home-card {
+  display: grid;
+  gap: 14px;
+}
+
 .card.result {
   display: flex;
   flex-direction: column;
@@ -308,13 +350,13 @@ function onShare() {
 }
 
 .card-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
 }
 
 .card-sub {
   margin-top: 6px;
-  font-size: 13px;
+  font-size: 14px;
   color: rgba(255, 255, 255, 0.72);
 }
 
@@ -329,21 +371,8 @@ function onShare() {
   gap: 8px;
 }
 
-.field.fixed {
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(10, 16, 24, 0.35);
-  border: 1px dashed rgba(255, 255, 255, 0.18);
-}
-
-.fixed-value {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.85);
-  font-weight: 600;
-}
-
 .label {
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -354,7 +383,7 @@ function onShare() {
   background: rgba(10, 16, 24, 0.55);
   color: rgba(255, 255, 255, 0.92);
   padding: 0 12px;
-  font-size: 14px;
+  font-size: 15px;
   outline: none;
 }
 
@@ -476,7 +505,7 @@ function onShare() {
 }
 
 .card-box .value.large {
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .card-box .value.text {
@@ -484,6 +513,20 @@ function onShare() {
   line-height: 1.6;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.85);
+}
+
+.muted-inline {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.65);
+  margin-left: 4px;
+}
+
+.good-text {
+  color: #6fe3a1;
+}
+
+.bad-text {
+  color: #ff7a7a;
 }
 
 .name {

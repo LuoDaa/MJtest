@@ -553,6 +553,26 @@ const BUDDIES = [
   "能看场的", "不急躁的", "有节奏感的", "读牌厉害的",
   "不爱冒险的", "稳健派的", "运气不浮的", "不逞强的",
 ];
+const BUDDY_PREFIX = [
+  "脸上没表情的",
+  "话少但靠谱的",
+  "笑而不语的",
+  "出牌很稳的",
+  "起手很稳的",
+  "不乱碰的",
+  "不乱杠的",
+  "牌品很稳的",
+];
+const BUDDY_TRAIT = [
+  "读牌很深",
+  "能守能攻",
+  "节奏感很强",
+  "看牌很准",
+  "不轻易点炮",
+  "手顺时不飘",
+  "逆风也稳",
+  "关键时不慌",
+];
 const TIPS = [
   "下雨（杠牌）比胡牌更实在，手里有暗杠尽量开，落袋为安。",
   "今天适合先稳一圈，别急着拼命，等对手犯错。",
@@ -596,19 +616,33 @@ const TIPS = [
   "胜负心重时更容易点炮，先稳住心态。",
 ];
 
-const MAHJONG_STYLE_BY_JIANCHU = {
-  建: { word: "快", style: "偏快偏攻", key: "attack" },
-  满: { word: "冲", style: "强势进攻", key: "attack" },
-  成: { word: "狠", style: "趁势进攻", key: "attack" },
-  开: { word: "狂", style: "先手抢攻", key: "attack" },
-  定: { word: "稳", style: "稳中带进", key: "balance" },
-  执: { word: "准", style: "稳中求准", key: "balance" },
-  收: { word: "守", style: "见好就收", key: "balance" },
-  平: { word: "顺", style: "稳中带守", key: "balance" },
-  除: { word: "藏", style: "偏稳偏守", key: "defend" },
-  破: { word: "守", style: "以守为主", key: "defend" },
-  危: { word: "稳", style: "谨慎防守", key: "defend" },
-  闭: { word: "藏", style: "收手保守", key: "defend" },
+const MAHJONG_STYLE_BY_ELEMENT = {
+  木: { word: "顺", style: "顺势推进", key: "balance" },
+  火: { word: "冲", style: "果断进攻", key: "attack" },
+  土: { word: "稳", style: "稳扎稳打", key: "balance" },
+  金: { word: "准", style: "精准控场", key: "balance" },
+  水: { word: "藏", style: "以守为主", key: "defend" },
+};
+
+const STEM_TO_ELEMENT = {
+  甲: "木",
+  乙: "木",
+  丙: "火",
+  丁: "火",
+  戊: "土",
+  己: "土",
+  庚: "金",
+  辛: "金",
+  壬: "水",
+  癸: "水",
+};
+
+const ELEMENT_DIRECTION = {
+  木: "东南",
+  火: "南",
+  土: "中宫",
+  金: "西北",
+  水: "北",
 };
 
 const GOODS_BY_STYLE = {
@@ -686,14 +720,23 @@ function mahjongLuckFromAlmanac(almanac, rng) {
   return { delta, hint: picked };
 }
 
-function getMahjongStyle(almanac) {
-  const jianchu = almanac.jianchu || "平";
-  return MAHJONG_STYLE_BY_JIANCHU[jianchu] || MAHJONG_STYLE_BY_JIANCHU["平"];
+function getMahjongStyleByBazi(birthDayGanzhi) {
+  const stem = birthDayGanzhi ? birthDayGanzhi[0] : "";
+  const element = STEM_TO_ELEMENT[stem] || "土";
+  return MAHJONG_STYLE_BY_ELEMENT[element] || MAHJONG_STYLE_BY_ELEMENT["土"];
 }
 
 function pickByStyle(rng, styleKey, map, fallback) {
   const list = map[styleKey] && map[styleKey].length ? map[styleKey] : fallback;
   return pick(rng, list);
+}
+
+function buildBestBuddy(seedStr) {
+  const buddySeed = xmur3(`buddy|${seedStr}`)();
+  const buddyRng = mulberry32(buddySeed);
+  const prefix = pick(buddyRng, BUDDY_PREFIX);
+  const trait = pick(buddyRng, BUDDY_TRAIT);
+  return `${prefix}，${trait}的`;
 }
 
 function scoreToTagline(score) {
@@ -704,12 +747,10 @@ function scoreToTagline(score) {
   return "先守后攻";
 }
 
-function getLuckyTimeShort(almanac) {
+function getLuckyTimeDisplay(almanac) {
   const times = almanac.luckyTimes || [];
   if (!times.length) return "";
-  const time = times[0].split(" ")[1] || "";
-  const parts = time.split("-");
-  return parts[1] || parts[0] || "";
+  return times.join("、");
 }
 
 function buildMahjongReading(score, mahjongLuck, mahjong) {
@@ -717,6 +758,9 @@ function buildMahjongReading(score, mahjongLuck, mahjong) {
   pieces.push(`今日手气指数${score}分，${scoreToTagline(score)}。`);
   pieces.push(`节奏建议：${mahjong.style}。`);
   pieces.push(`局势提示：${mahjongLuck.hint}`);
+  if (mahjong.bazi && mahjong.bazi.dayGanzhi) {
+    pieces.push(`日柱${mahjong.bazi.dayGanzhi}，五行属${mahjong.bazi.element}，利${mahjong.bazi.direction}方。`);
+  }
   return pieces.join("");
 }
 
@@ -768,7 +812,6 @@ export function generateFortune({ name, birthYmd, dateKey }) {
 
   const almanac = getAlmanac(safeDate);
   const mahjongLuck = mahjongLuckFromAlmanac(almanac, rng);
-  const mahjongStyle = getMahjongStyle(almanac);
 
   const base = Math.floor(rng() * 58) + 38; // 38-95
   const score = clamp(base + mahjongLuck.delta, 0, 100);
@@ -792,14 +835,18 @@ export function generateFortune({ name, birthYmd, dateKey }) {
   ];
 
   const birth = parseYmd(safeBirth);
-  const zodiac =
+  const birthLunar =
     birth && isLunarSupported(birth.y)
-      ? getZodiacByLunarYear(solarToLunar(birth.y, birth.m, birth.d).lYear)
-      : "未知";
+      ? solarToLunar(birth.y, birth.m, birth.d)
+      : null;
+  const zodiac = birthLunar ? getZodiacByLunarYear(birthLunar.lYear) : "未知";
   const constellation = birth ? getConstellation(birth.m, birth.d) : "未知";
+  const birthDayGanzhi = birthLunar ? birthLunar.cDay : "";
+  const baziStyle = getMahjongStyleByBazi(birthDayGanzhi);
+  const birthElement = STEM_TO_ELEMENT[birthDayGanzhi[0]] || "土";
 
   const tipsPoolExtended = tipsPool.concat([mahjongLuck.hint]);
-  const luckyTime = getLuckyTimeShort(almanac);
+  const luckyTime = getLuckyTimeDisplay(almanac);
 
   const summaryMap = {
     大吉: "手气在线，果断出手更容易胡牌。",
@@ -810,16 +857,21 @@ export function generateFortune({ name, birthYmd, dateKey }) {
   };
 
   const mahjong = {
-    word: mahjongStyle.word || pick(rng, MAHJONG_WORDS),
+    word: baziStyle.word || pick(rng, MAHJONG_WORDS),
     luckyTime,
     avoidSuit: pick(rng, AVOID_SUIT),
     fortuneTile: pick(rng, FORTUNE_TILES),
-    good: pickByStyle(rng, mahjongStyle.key, GOODS_BY_STYLE, GOODS),
-    bad: pickByStyle(rng, mahjongStyle.key, BADS_BY_STYLE, BADS),
-    bestBuddy: pick(rng, BUDDIES),
-    tip: pickByStyle(rng, mahjongStyle.key, TIPS_BY_STYLE, TIPS),
+    good: pickByStyle(rng, baziStyle.key, GOODS_BY_STYLE, GOODS),
+    bad: pickByStyle(rng, baziStyle.key, BADS_BY_STYLE, BADS),
+    bestBuddy: buildBestBuddy(seedStr),
+    tip: pickByStyle(rng, baziStyle.key, TIPS_BY_STYLE, TIPS),
     tagline: scoreToTagline(score),
-    style: mahjongStyle.style,
+    style: baziStyle.style,
+    bazi: {
+      dayGanzhi: birthDayGanzhi,
+      element: birthElement,
+      direction: ELEMENT_DIRECTION[birthElement] || "中",
+    },
   };
   mahjong.reading = buildMahjongReading(score, mahjongLuck, mahjong);
   mahjong.summaryLines = buildMahjongSummary(score, mahjongLuck, mahjong);
