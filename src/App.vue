@@ -76,6 +76,8 @@
               </div>
               <div class="score-badge-desc">{{ result.mahjong.tagline }}</div>
             </div>
+            <div v-if="isHot" class="score-fx hot">杠上开花</div>
+            <div v-else-if="isLow" class="score-fx low">点炮预警</div>
             <button class="btn ghost small" @click="backHome">换人再测</button>
           </div>
         </div>
@@ -84,6 +86,7 @@
           <div class="card-box small">
             <div class="label">🀄 今日字诀</div>
             <div class="value large">{{ result.mahjong.word }}</div>
+            <div class="value-sub">{{ result.mahjong.wordJoke }}</div>
           </div>
           <div class="card-box small">
             <div class="label">🧭 最佳方位</div>
@@ -105,10 +108,12 @@
           <div class="card-box small">
             <div class="label">✅ 宜</div>
             <div class="value good-text">{{ result.mahjong.good }}</div>
+            <div class="value-sub good-text">{{ result.mahjong.goodDetail }}</div>
           </div>
           <div class="card-box small">
             <div class="label">⛔ 忌</div>
             <div class="value bad-text">{{ result.mahjong.bad }}</div>
+            <div class="value-sub bad-text">{{ result.mahjong.badDetail }}</div>
           </div>
 
           <div class="card-box wide">
@@ -180,6 +185,8 @@ const todayLabel = computed(() => ymdLabel(todayKey.value));
 const result = computed(() =>
   generateFortune({ name: form.name, birthYmd: form.birth, dateKey: todayKey.value })
 );
+const isHot = computed(() => result.value.score >= 85);
+const isLow = computed(() => result.value.score <= 55);
 
 function start() {
   if (!form.name) {
@@ -465,6 +472,27 @@ function almanacLineClass(line) {
   color: rgba(255, 255, 255, 0.78);
 }
 
+.score-fx {
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.score-fx.hot {
+  background: linear-gradient(120deg, rgba(255, 190, 92, 0.9), rgba(255, 107, 107, 0.9));
+  color: #2a1405;
+  animation: pop 1.2s ease-in-out infinite;
+}
+
+.score-fx.low {
+  background: rgba(255, 88, 88, 0.18);
+  color: #ff8a8a;
+  border: 1px solid rgba(255, 122, 122, 0.4);
+  animation: shake 0.8s ease-in-out infinite;
+}
+
 .result-grid {
   display: grid;
   gap: 12px;
@@ -513,6 +541,13 @@ function almanacLineClass(line) {
   line-height: 1.6;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.85);
+}
+
+.value-sub {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .muted-inline {
@@ -596,6 +631,27 @@ function almanacLineClass(line) {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes pop {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
   }
 }
 

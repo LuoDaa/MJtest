@@ -624,6 +624,24 @@ const MAHJONG_STYLE_BY_ELEMENT = {
   水: { word: "藏", style: "以守为主", key: "defend" },
 };
 
+const WORD_JOKE = {
+  "藏": "“藏”就是别乱杠，把好牌捂到最后再胡，不然容易被截胡。",
+  "冲": "“冲”就是手顺就加速，听牌果断推进，别拖。",
+  "稳": "“稳”就是先保安全口，少点炮，慢慢找机会。",
+  "狠": "“狠”就是能胡就胡，别犹豫，别留情。",
+  "守": "“守”就是先保命，再等对手犯错。",
+  "快": "“快”就是速度第一，先听后说。",
+  "准": "“准”就是读牌要准，出牌要稳。",
+  "顺": "“顺”就是顺势而为，有牌就走。",
+  "亮": "“亮”就是牌路清晰，别藏太深。",
+  "狂": "“狂”就是气势上来敢冲，但别上头。",
+  "稳扎": "“稳扎”就是稳扎稳打，别频繁改牌。",
+  "顺手": "“顺手”就是顺牌即冲，别逆着做。",
+  "守势": "“守势”就是以防守为主，等机会反打。",
+  "快听": "“快听”就是早成型早听牌。",
+  "准狠": "“准狠”就是读牌要准，出手要狠。",
+};
+
 const STEM_TO_ELEMENT = {
   甲: "木",
   乙: "木",
@@ -638,11 +656,27 @@ const STEM_TO_ELEMENT = {
 };
 
 const ELEMENT_DIRECTION = {
-  木: "东南",
+  木: "东",
   火: "南",
-  土: "中宫",
-  金: "西北",
+  土: "南",
+  金: "西",
   水: "北",
+};
+
+const ADVICE_DETAIL = {
+  "稳听保底": "优先做平胡，避免贪大吊将。",
+  "放弃安全口": "后期少打生张，尤其幺九牌。",
+  "先防后攻": "前期保安全牌，听牌后再提速。",
+  "早听早胡": "成型就听，别拖到后半场。",
+  "抢杠胡": "对手明杠时留意听口变化。",
+  "乱拆安全牌": "安全牌留到后期防放铳。",
+  "乱打危险牌": "中后期减少生张与幺九。",
+  "追张过深": "进张差就收缩牌型。",
+  "盲目清一色": "没成型别硬做清一色。",
+  "硬上绝张": "绝张不追，改听两面。",
+  "不看牌河": "多看牌河，避开危险张。",
+  "乱改听牌": "听牌后优先保好听口。",
+  "硬拆对子": "对子留着做将或碰。",
 };
 
 const GOODS_BY_STYLE = {
@@ -729,6 +763,19 @@ function getMahjongStyleByBazi(birthDayGanzhi) {
 function pickByStyle(rng, styleKey, map, fallback) {
   const list = map[styleKey] && map[styleKey].length ? map[styleKey] : fallback;
   return pick(rng, list);
+}
+
+function getWordJoke(word) {
+  if (!word) return "";
+  if (WORD_JOKE[word]) return WORD_JOKE[word];
+  const lead = word[0];
+  return WORD_JOKE[lead] || "字诀就是节奏，稳住就是赢。";
+}
+
+function getAdviceDetail(term, type) {
+  if (ADVICE_DETAIL[term]) return ADVICE_DETAIL[term];
+  if (type === "good") return "稳住牌型，效率优先。";
+  return "后期少打生张，谨慎点炮。";
 }
 
 function buildBestBuddy(seedStr) {
@@ -873,6 +920,9 @@ export function generateFortune({ name, birthYmd, dateKey }) {
       direction: ELEMENT_DIRECTION[birthElement] || "中",
     },
   };
+  mahjong.wordJoke = getWordJoke(mahjong.word);
+  mahjong.goodDetail = getAdviceDetail(mahjong.good, "good");
+  mahjong.badDetail = getAdviceDetail(mahjong.bad, "bad");
   mahjong.reading = buildMahjongReading(score, mahjongLuck, mahjong);
   mahjong.summaryLines = buildMahjongSummary(score, mahjongLuck, mahjong);
   const almanacSummary = buildAlmanacSummary(almanac);
