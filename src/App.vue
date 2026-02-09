@@ -575,9 +575,9 @@ async function onCopy() {
 
 .result-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 16px;
+  grid-template-columns: minmax(0, 1.2fr) auto;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .who {
@@ -594,7 +594,7 @@ async function onCopy() {
 }
 
 .score-badge {
-  min-width: 140px;
+  width: clamp(120px, 45vw, 180px);
   border-radius: 12px;
   padding: 8px 10px;
   background: radial-gradient(120px 80px at 20% 20%, rgba(244, 197, 106, 0.18), transparent 60%),
@@ -617,7 +617,7 @@ async function onCopy() {
 }
 
 .score-badge-v .num {
-  font-size: clamp(24px, 6vw, 30px);
+  font-size: clamp(22px, 5.4vw, 28px);
   font-weight: 700;
   color: #f9d889;
 }
