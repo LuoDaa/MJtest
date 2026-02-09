@@ -43,7 +43,7 @@
         <div class="value-sub">{{ result.mahjong.strategy.desc }}</div>
       </div>
 
-      <div class="card-box wide">
+      <div class="card-box wide almanac-card">
         <div class="label">🎴 三门局势</div>
         <div class="suits-grid">
           <div class="suit-chip favored">
@@ -64,7 +64,7 @@
         </div>
       </div>
 
-      <div class="card-box wide">
+      <div class="card-box wide reading-card">
         <div class="label">📅 今日黄历</div>
         <div class="value text">
           公历 {{ result.almanac.solar }} · 农历 {{ result.almanac.lunar }} ·
@@ -90,7 +90,7 @@
       </div>
 
       <div class="info-dual">
-        <div class="card-box">
+        <div class="card-box wuxing-card">
           <div class="label">☯️ 五行关系</div>
           <div class="value text compact-line">
             {{ result.wuxingRelation.label }} · 日主{{ result.wuxingRelation.personalElement }}/日干{{ result.wuxingRelation.dayElement }} ·
@@ -102,7 +102,7 @@
           <div class="value-sub muted-inline">{{ result.wuxingRelation.text }}</div>
         </div>
 
-        <div v-if="result.baziInfo" class="card-box">
+        <div v-if="result.baziInfo" class="card-box bazi-card">
           <div class="label">📜 八字四柱</div>
           <div class="value text compact-line">
             {{ result.baziInfo.year }} · {{ result.baziInfo.month }} · {{ result.baziInfo.day }} · {{ result.baziInfo.hour }}
@@ -119,7 +119,7 @@
         </div>
       </div>
 
-      <div class="card-box wide">
+      <div class="card-box wide score-card">
         <div class="label">📈 评分说明</div>
         <div class="value text">分数 = 基础盘势 + 八字修正 + 当日气场</div>
         <div class="value-sub">
