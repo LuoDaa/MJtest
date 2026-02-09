@@ -450,9 +450,9 @@ async function onCopy() {
 }
 
 .content {
-  max-width: 760px;
+  max-width: 780px;
   margin: 0 auto;
-  padding: 18px 18px 36px;
+  padding: 14px 14px 28px;
 }
 
 .hero {
@@ -483,8 +483,8 @@ async function onCopy() {
 }
 
 .card {
-  border-radius: 22px;
-  padding: 18px;
+  border-radius: 18px;
+  padding: 14px;
   background: linear-gradient(180deg, rgba(60, 14, 14, 0.92), rgba(22, 8, 8, 0.85));
   border: 1px solid rgba(244, 197, 106, 0.18);
   box-shadow: 0 22px 50px rgba(0, 0, 0, 0.5);
@@ -594,9 +594,9 @@ async function onCopy() {
 }
 
 .score-badge {
-  min-width: 170px;
-  border-radius: 16px;
-  padding: 12px 14px;
+  min-width: 150px;
+  border-radius: 14px;
+  padding: 10px 12px;
   background: radial-gradient(120px 80px at 20% 20%, rgba(244, 197, 106, 0.18), transparent 60%),
               rgba(16, 6, 6, 0.85);
   border: 1px solid rgba(244, 197, 106, 0.35);
@@ -661,8 +661,8 @@ async function onCopy() {
 }
 
 .card-box {
-  border-radius: 16px;
-  padding: 14px;
+  border-radius: 14px;
+  padding: 12px;
   background: rgba(14, 6, 6, 0.82);
   border: 1px solid rgba(244, 197, 106, 0.12);
 }
@@ -684,26 +684,26 @@ async function onCopy() {
 }
 
 .card-box .value {
-  margin-top: 8px;
-  font-size: 18px;
+  margin-top: 6px;
+  font-size: 17px;
   font-weight: 700;
 }
 
 .card-box .value.large {
-  font-size: 20px;
+  font-size: 19px;
 }
 
 .card-box .value.text {
   font-size: 13px;
-  line-height: 1.6;
+  line-height: 1.55;
   font-weight: 500;
   color: rgba(255, 236, 205, 0.88);
 }
 
 .value-sub {
-  margin-top: 6px;
+  margin-top: 5px;
   font-size: 12px;
-  line-height: 1.5;
+  line-height: 1.45;
   color: rgba(255, 226, 190, 0.72);
 }
 
@@ -714,7 +714,7 @@ async function onCopy() {
 }
 
 .name {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   color: #ffe4b8;
 }
@@ -726,15 +726,15 @@ async function onCopy() {
 }
 
 .suits-grid {
-  margin-top: 10px;
+  margin-top: 8px;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .suit-chip {
-  border-radius: 12px;
-  padding: 10px;
+  border-radius: 10px;
+  padding: 8px;
   text-align: center;
   border: 1px solid rgba(244, 197, 106, 0.15);
   background: rgba(20, 7, 7, 0.8);
@@ -764,8 +764,8 @@ async function onCopy() {
 
 .chip-value {
   display: block;
-  margin-top: 6px;
-  font-size: 16px;
+  margin-top: 4px;
+  font-size: 15px;
   font-weight: 700;
 }
 
@@ -774,9 +774,9 @@ async function onCopy() {
 }
 
 .quote {
-  margin-top: 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
   background: rgba(28, 10, 10, 0.75);
   border: 1px dashed rgba(244, 197, 106, 0.25);
   color: rgba(255, 226, 190, 0.9);
@@ -786,8 +786,8 @@ async function onCopy() {
 
 .actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
 }
 
 .actions.single {
@@ -795,9 +795,9 @@ async function onCopy() {
 }
 
 .btn {
-  height: 46px;
-  border-radius: 14px;
-  font-size: 15px;
+  height: 42px;
+  border-radius: 12px;
+  font-size: 14px;
   font-weight: 700;
   border: 1px solid rgba(244, 197, 106, 0.25);
   cursor: pointer;
@@ -858,6 +858,10 @@ async function onCopy() {
     align-items: flex-start;
   }
 
+  .content {
+    padding: 12px 10px 22px;
+  }
+
   .result-head {
     grid-template-columns: 1fr;
     justify-items: center;
@@ -891,7 +895,50 @@ async function onCopy() {
   }
 
   .suits-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .hero-sub {
+    font-size: 13px;
+  }
+
+  .card-title {
+    font-size: 18px;
+  }
+
+  .card {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .card-box {
+    padding: 10px;
+  }
+
+  .name {
+    font-size: 18px;
+  }
+
+  .card-box .value {
+    font-size: 16px;
+  }
+
+  .card-box .value.large {
+    font-size: 17px;
+  }
+
+  .card-box .value.text,
+  .value-sub {
+    font-size: 12px;
+  }
+
+  .btn {
+    height: 40px;
+    font-size: 13px;
   }
 }
 </style>
