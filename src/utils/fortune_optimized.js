@@ -1,3 +1,11 @@
+import {
+  GOD_IMPACT_WEIGHTS,
+  SCORE_RULES,
+  resolveScoreLevel,
+  rollBaseSeed,
+} from "./fortune/scoring_rules.js";
+import { sanitizeFortuneResult } from "./fortune/sanitize_result.js";
+
 // src/utils/fortune_optimized.js - 优化版传统文化算卦逻辑
 
 // xmur3: string -> 32-bit seed
@@ -780,11 +788,7 @@ function getAlmanac(dateKey) {
 }
 
 function scoreToLevel(score) {
-  if (score >= 90) return "大吉";
-  if (score >= 75) return "中吉";
-  if (score >= 60) return "小吉";
-  if (score >= 45) return "平";
-  return "小凶";
+  return resolveScoreLevel(score);
 }
 
 // 麻将运势与八卦五行结合（建除各100条）
@@ -1983,7 +1987,7 @@ export function generateFortune({ name, birthYmd, birthTime, birthLongitude, dat
   const dayElement = almanac.dayElement || "土";
   const relation = getWuxingRelation(personalElement, dayElement);
 
-  const baseSeed = 58 + Math.floor(rng() * 15); // 58-72基础范围
+  const baseSeed = rollBaseSeed(rng);
 
   const monthElement = bazi ? BRANCH_TO_ELEMENT[bazi.month[1]] : "";
   const strengthInfo = getDayMasterStrengthTag(bazi?.counts, personalElement, monthElement);
@@ -2002,8 +2006,8 @@ export function generateFortune({ name, birthYmd, birthTime, birthLongitude, dat
   };
   const dayBranchElement = BRANCH_TO_ELEMENT[almanac.dayBranch] || "";
   const favorableDelta =
-    getGodImpactDelta(dayElement, gods, { use: 7, joy: 4, avoid: 6, enemy: 8 }) +
-    getGodImpactDelta(dayBranchElement, gods, { use: 4, joy: 2, avoid: 3, enemy: 4 });
+    getGodImpactDelta(dayElement, gods, GOD_IMPACT_WEIGHTS.dayStem) +
+    getGodImpactDelta(dayBranchElement, gods, GOD_IMPACT_WEIGHTS.dayBranch);
 
   const todayParsed = parseYmd(safeDate);
   const flowDate = todayParsed ? new Date(todayParsed.y, todayParsed.m - 1, todayParsed.d) : new Date();
@@ -2012,14 +2016,14 @@ export function generateFortune({ name, birthYmd, birthTime, birthLongitude, dat
   const flowYearElement = STEM_TO_ELEMENT[flowYearGanzhi[0]] || "";
   const flowMonthElement = STEM_TO_ELEMENT[flowMonthGanzhi[0]] || "";
   const flowDelta =
-    getGodImpactDelta(flowYearElement, gods, { use: 2, joy: 1, avoid: 2, enemy: 3 }) +
-    getGodImpactDelta(flowMonthElement, gods, { use: 3, joy: 2, avoid: 3, enemy: 4 });
+    getGodImpactDelta(flowYearElement, gods, GOD_IMPACT_WEIGHTS.flowYear) +
+    getGodImpactDelta(flowMonthElement, gods, GOD_IMPACT_WEIGHTS.flowMonth);
 
   const baziDelta = seasonDelta + strengthDelta + favorableDelta + flowDelta;
-  const almanacDelta = Math.round(mahjongLuck.delta * 0.25);
+  const almanacDelta = Math.round(mahjongLuck.delta * SCORE_RULES.almanacScale);
   const scoreRaw = baseSeed + baziDelta + almanacDelta;
 
-  const score = clamp(scoreRaw, 0, 100);
+  const score = clamp(scoreRaw, SCORE_RULES.minScore, SCORE_RULES.maxScore);
   const level = scoreToLevel(score);
 
   const birthLunarCalc = birthLunar;
@@ -2155,7 +2159,7 @@ export function generateFortune({ name, birthYmd, birthTime, birthLongitude, dat
     final: score,
   };
 
-  return {
+  return sanitizeFortuneResult({
     seedStr,
     dateKey: safeDate,
     inputs: { name: safeName, birthYmd: safeBirth, birthTime: safeTime, birthLongitude: safeLongitude, mahjongType },
@@ -2168,6 +2172,20 @@ export function generateFortune({ name, birthYmd, birthTime, birthLongitude, dat
     wuxingRelation,
     baziInfo: bazi, // 八字信息
     baziSummary: baziTodaySummary,
+    almanac: {
+      solar: almanac.solar,
+      lunar: almanac.lunarDate,
+      solarTerm: almanac.solarTerm,
+      jianchu: almanac.jianchu,
+      jianchuMeaning: almanac.jianchuMeaning,
+      yi: almanac.yi,
+      ji: almanac.ji,
+      luckyTimes: almanac.luckyTimes,
+      avoidTime: almanac.avoidTime,
+      dayAnimal: almanac.dayAnimal,
+      dayBranch: almanac.dayBranch,
+      dayElement: almanac.dayElement,
+    },
     flowInfo,
-  };
+  });
 }
