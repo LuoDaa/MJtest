@@ -339,27 +339,32 @@
   text-shadow: 0 2px 12px rgba(255, 72, 96, 0.35);
 }
 
-.score-badge-v .num.score-top {
+.score-badge-v .num.score-top,
+.name.score-top {
   color: #ff5f68;
   text-shadow: 0 2px 14px rgba(255, 40, 72, 0.45);
 }
 
-.score-badge-v .num.score-high {
+.score-badge-v .num.score-high,
+.name.score-high {
   color: #ff8c3a;
   text-shadow: 0 2px 12px rgba(255, 140, 58, 0.4);
 }
 
-.score-badge-v .num.score-mid {
+.score-badge-v .num.score-mid,
+.name.score-mid {
   color: #f5c45a;
   text-shadow: 0 2px 12px rgba(245, 196, 90, 0.35);
 }
 
-.score-badge-v .num.score-low {
+.score-badge-v .num.score-low,
+.name.score-low {
   color: #7ba1d9;
   text-shadow: 0 2px 12px rgba(123, 161, 217, 0.35);
 }
 
-.score-badge-v .num.score-risk {
+.score-badge-v .num.score-risk,
+.name.score-risk {
   color: #b8b8b8;
   text-shadow: 0 2px 10px rgba(165, 165, 165, 0.3);
 }
@@ -444,6 +449,7 @@
   font-size: clamp(20px, 3.8vw, 28px);
   font-weight: 700;
   color: #ffe4b8;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
 .birth {

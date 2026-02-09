@@ -115,12 +115,12 @@ export function useFortuneState() {
       await document.fonts.ready;
     }
 
-    const node = resultRef.value || document.body;
-    if (!node) return;
-
+    const root = resultRef.value || document.body;
+    if (!root) return;
+    const node = root.querySelector(".card.result") || root;
     const rect = node.getBoundingClientRect();
-    const width = Math.ceil(Math.max(rect.width, node.scrollWidth || 0));
-    const height = Math.ceil(Math.max(rect.height, node.scrollHeight || 0));
+    const width = Math.ceil(rect.width);
+    const height = Math.ceil(rect.height);
     const scale = resolveCaptureScale();
 
     try {
@@ -130,12 +130,6 @@ export function useFortuneState() {
         useCORS: true,
         width,
         height,
-        windowWidth: width,
-        windowHeight: height,
-        x: 0,
-        y: 0,
-        scrollX: 0,
-        scrollY: 0,
         removeContainer: true,
         onclone: (doc) => {
           doc.documentElement.classList.add("capture-mode");

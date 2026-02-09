@@ -3,7 +3,7 @@
     <div class="result-head">
       <div class="who-card">
         <div class="who">
-          <div class="name">{{ form.name || "未命名" }}</div>
+          <div class="name" :class="scoreToneClass(result.score)">{{ form.name || "未命名" }}</div>
           <div class="birth">
             生日 {{ form.birth || "未填写" }}<span v-if="form.birthTime"> {{ form.birthTime }}</span>
             · 生肖{{ result.birthInfo.zodiac }} · {{ result.birthInfo.constellation }}
