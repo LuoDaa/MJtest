@@ -595,13 +595,13 @@
   }
 
   .result-head {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     justify-items: stretch;
-    text-align: center;
+    text-align: left;
   }
 
   .who {
-    align-items: center;
+    align-items: flex-start;
   }
 
   .score-badge {
@@ -613,16 +613,16 @@
   }
 
   .result-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .card-box.wide {
-    grid-column: span 1;
+    grid-column: span 2;
   }
 
   .info-dual {
-    grid-column: span 1;
-    grid-template-columns: 1fr;
+    grid-column: span 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .suits-grid {
@@ -663,6 +663,11 @@
     font-size: 12px;
   }
 
+  .birth {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
   .btn {
     height: 38px;
     font-size: 12.5px;
@@ -676,6 +681,23 @@
 
   .content {
     padding: 0 8px 16px;
+  }
+
+  .result-head {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .result-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card-box.wide {
+    grid-column: span 2;
+  }
+
+  .info-dual {
+    grid-column: span 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .card {
