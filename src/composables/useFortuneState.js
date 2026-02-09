@@ -53,6 +53,13 @@ function buildCopyText({ form, result }) {
   return lines.join("\n");
 }
 
+function resolveCaptureScale() {
+  const dpr = window.devicePixelRatio || 1;
+  const isMobile = /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
+  const cap = isMobile ? 1.5 : 2;
+  return Math.max(1, Math.min(dpr, cap));
+}
+
 export function useFortuneState() {
   const view = ref("home");
   const resultRef = ref(null);
@@ -112,9 +119,9 @@ export function useFortuneState() {
     if (!node) return;
 
     const rect = node.getBoundingClientRect();
-    const width = Math.ceil(rect.width);
-    const height = Math.ceil(rect.height);
-    const scale = Math.min(window.devicePixelRatio || 2, 3);
+    const width = Math.ceil(Math.max(rect.width, node.scrollWidth || 0));
+    const height = Math.ceil(Math.max(rect.height, node.scrollHeight || 0));
+    const scale = resolveCaptureScale();
 
     try {
       const canvas = await html2canvas(node, {
@@ -129,6 +136,10 @@ export function useFortuneState() {
         y: 0,
         scrollX: 0,
         scrollY: 0,
+        removeContainer: true,
+        onclone: (doc) => {
+          doc.documentElement.classList.add("capture-mode");
+        },
       });
 
       const link = document.createElement("a");

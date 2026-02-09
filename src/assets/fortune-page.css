@@ -30,8 +30,7 @@
 }
 
 .topbar {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 5;
   display: flex;
   justify-content: space-between;
@@ -41,6 +40,22 @@
   border-bottom: 1px solid rgba(244, 197, 106, 0.25);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(10px);
+}
+
+.capture-mode .page::before {
+  content: none !important;
+}
+
+.capture-mode .card,
+.capture-mode .topbar,
+.capture-mode .score-badge,
+.capture-mode .who-card {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.capture-mode * {
+  animation: none !important;
 }
 
 .brand {
