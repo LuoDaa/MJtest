@@ -60,6 +60,10 @@ function resolveCaptureScale() {
   return Math.max(1, Math.min(dpr, cap));
 }
 
+function waitNextFrame() {
+  return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+}
+
 export function useFortuneState() {
   const view = ref("home");
   const resultRef = ref(null);
@@ -117,19 +121,37 @@ export function useFortuneState() {
 
     const root = resultRef.value || document.body;
     if (!root) return;
-    const node = root.querySelector(".card.result") || root;
-    const rect = node.getBoundingClientRect();
-    const width = Math.ceil(rect.width);
-    const height = Math.ceil(rect.height);
+    const sourceNode = root.querySelector(".card.result") || root;
+    const width = Math.ceil(sourceNode.getBoundingClientRect().width);
     const scale = resolveCaptureScale();
+    let stage = null;
 
     try {
-      const canvas = await html2canvas(node, {
+      stage = document.createElement("div");
+      stage.style.position = "fixed";
+      stage.style.left = "-100000px";
+      stage.style.top = "0";
+      stage.style.width = `${width}px`;
+      stage.style.margin = "0";
+      stage.style.padding = "0";
+      stage.style.pointerEvents = "none";
+      stage.style.opacity = "0";
+      stage.style.background = "#140707";
+
+      const cloneNode = sourceNode.cloneNode(true);
+      cloneNode.style.width = `${width}px`;
+      cloneNode.style.margin = "0";
+      cloneNode.style.transform = "none";
+      stage.appendChild(cloneNode);
+      document.body.appendChild(stage);
+
+      await waitNextFrame();
+      await waitNextFrame();
+
+      const canvas = await html2canvas(cloneNode, {
         backgroundColor: "#140707",
         scale,
         useCORS: true,
-        width,
-        height,
         removeContainer: true,
         onclone: (doc) => {
           doc.documentElement.classList.add("capture-mode");
@@ -142,6 +164,10 @@ export function useFortuneState() {
       link.click();
     } catch {
       alert("截图失败，请稍后重试。");
+    } finally {
+      if (stage && stage.parentNode) {
+        stage.parentNode.removeChild(stage);
+      }
     }
   }
 
