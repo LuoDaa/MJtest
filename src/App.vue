@@ -450,9 +450,9 @@ async function onCopy() {
 }
 
 .content {
-  max-width: 780px;
+  max-width: clamp(320px, 94vw, 780px);
   margin: 0 auto;
-  padding: 14px 14px 28px;
+  padding: clamp(10px, 3vw, 16px);
 }
 
 .hero {
@@ -483,8 +483,8 @@ async function onCopy() {
 }
 
 .card {
-  border-radius: 18px;
-  padding: 14px;
+  border-radius: 16px;
+  padding: clamp(10px, 3vw, 14px);
   background: linear-gradient(180deg, rgba(60, 14, 14, 0.92), rgba(22, 8, 8, 0.85));
   border: 1px solid rgba(244, 197, 106, 0.18);
   box-shadow: 0 22px 50px rgba(0, 0, 0, 0.5);
@@ -494,13 +494,13 @@ async function onCopy() {
 
 .home-card {
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .card.result {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .card-title {
@@ -594,9 +594,9 @@ async function onCopy() {
 }
 
 .score-badge {
-  min-width: 150px;
-  border-radius: 14px;
-  padding: 10px 12px;
+  min-width: 140px;
+  border-radius: 12px;
+  padding: 8px 10px;
   background: radial-gradient(120px 80px at 20% 20%, rgba(244, 197, 106, 0.18), transparent 60%),
               rgba(16, 6, 6, 0.85);
   border: 1px solid rgba(244, 197, 106, 0.35);
@@ -617,7 +617,7 @@ async function onCopy() {
 }
 
 .score-badge-v .num {
-  font-size: 30px;
+  font-size: clamp(24px, 6vw, 30px);
   font-weight: 700;
   color: #f9d889;
 }
@@ -685,25 +685,25 @@ async function onCopy() {
 
 .card-box .value {
   margin-top: 6px;
-  font-size: 17px;
+  font-size: clamp(15px, 4vw, 17px);
   font-weight: 700;
 }
 
 .card-box .value.large {
-  font-size: 19px;
+  font-size: clamp(16px, 4.4vw, 19px);
 }
 
 .card-box .value.text {
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 12.5px;
+  line-height: 1.52;
   font-weight: 500;
   color: rgba(255, 236, 205, 0.88);
 }
 
 .value-sub {
   margin-top: 5px;
-  font-size: 12px;
-  line-height: 1.45;
+  font-size: 11.5px;
+  line-height: 1.42;
   color: rgba(255, 226, 190, 0.72);
 }
 
@@ -728,7 +728,7 @@ async function onCopy() {
 .suits-grid {
   margin-top: 8px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
   gap: 8px;
 }
 
@@ -786,7 +786,7 @@ async function onCopy() {
 
 .actions {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 10px;
 }
 
@@ -795,9 +795,9 @@ async function onCopy() {
 }
 
 .btn {
-  height: 42px;
+  height: 40px;
   border-radius: 12px;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   border: 1px solid rgba(244, 197, 106, 0.25);
   cursor: pointer;
@@ -859,7 +859,7 @@ async function onCopy() {
   }
 
   .content {
-    padding: 12px 10px 22px;
+    padding: 12px 10px 20px;
   }
 
   .result-head {
@@ -895,7 +895,7 @@ async function onCopy() {
   }
 
   .suits-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
   }
 
   .hero-title {
@@ -937,8 +937,51 @@ async function onCopy() {
   }
 
   .btn {
-    height: 40px;
-    font-size: 13px;
+    height: 38px;
+    font-size: 12.5px;
+  }
+}
+
+@media (max-width: 420px) {
+  .content {
+    padding: 10px 8px 16px;
+  }
+
+  .hero-title {
+    font-size: 26px;
+  }
+
+  .card {
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .card-box {
+    padding: 9px;
+    border-radius: 11px;
+  }
+
+  .card-box .value {
+    font-size: 15px;
+  }
+
+  .card-box .value.large {
+    font-size: 16px;
+  }
+
+  .card-box .value.text,
+  .value-sub {
+    font-size: 11.5px;
+  }
+
+  .btn {
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .score-badge {
+    min-width: 130px;
+    padding: 8px 10px;
   }
 }
 </style>
